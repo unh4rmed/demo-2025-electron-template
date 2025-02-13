@@ -2,13 +2,24 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import connectDB from './db';
 
-async function foo(event, data) {
+async function getData() {
   try {
-    console.log(data)
-    dialog.showMessageBox({ message: 'message back' })
+    const familyMembersRes = await global.dbclient.query(`SELECT * FROM family_members`)
+    const familyMembersJobsRes = await global.dbclient.query(`SELECT * FROM family_members_job`)
+    const expenceProductRes =  await global.dbclient.query(`SELECT * FROM expence_product`)
+    const productRes = await global.dbclient.query(`SELECT * FROM product`)
+    const data = {
+      familyMembers: familyMembersRes.rows,
+      familyMembersJobs: familyMembersJobsRes.rows,
+      expenceProduct: expenceProductRes.rows,
+      product: productRes.rows,
+
+    }
+    return data
   } catch (e) {
-    dialog.showErrorBox('Ошибка', e)
+    console.log(e)
   }
 }
 
@@ -24,6 +35,8 @@ function createWindow() {
       sandbox: false
     }
   })
+
+  mainWindow.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -41,10 +54,12 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
 
-  ipcMain.handle('sendSignal', foo)
+  global.dbclient = await connectDB();
+
+  ipcMain.handle('getData', getData)
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)

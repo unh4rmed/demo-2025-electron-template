@@ -1,0 +1,79 @@
+CREATE TABLE product_category (
+    id SERIAL PRIMARY KEY,
+    category VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    product_category_id INT REFERENCES product_category(id),
+    unit_price INT NOT NULL
+);
+
+CREATE TABLE family_members (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    birth_date DATE NOT NULL
+);
+
+CREATE TABLE family_members_job (
+  id SERIAL PRIMARY KEY,
+  family_member_id INT REFERENCES family_members(id),
+  position VARCHAR(255) NOT NULL,
+  organization VARCHAR(255) NOT NULL,
+  salary BIGINT NOT NULL,
+  start_date DATE NOT NULL
+);
+
+CREATE TABLE expence_product (
+  id SERIAL PRIMARY KEY,
+  date_of_purchase DATE NOT NULL,
+  member_id INT REFERENCES family_members(id),
+  product_id INT REFERENCES products(id),
+  quantity INT NOT NULL
+);
+
+INSERT INTO family_members (full_name, birth_date) VALUES
+('Иванов Иван Петрович', '1985-06-15'),
+('Иванова Мария Сергеевна', '1987-09-20'),
+('Иванов Алексей Иванович', '2010-02-05'),
+('Иванова Елена Викторовна', '1959-03-10'),
+('Петров Сергей Александрович', '1982-12-05');
+
+INSERT INTO product_category (category) VALUES
+('Продукты'),
+('Транспорт'),
+('Развлечения'),
+('Одежда'),
+('Образование'),
+('Здоровье'),
+('Кредиты'),
+('Подарки');
+
+INSERT INTO products (name, product_category_id, unit_price) VALUES
+('Хлеб', 1, 50),
+('Молоко', 1, 80),
+('Бензин', 2, 80),
+('Билет в кино', 3, 300),
+('Зимнее пальто', 4, 8500),
+('Учебники', 5, 400),
+('Лекарства', 6, 25000),
+('Погашение кредита', 7, 89000),
+('Смартфон в подарок', 8, 99900);
+
+INSERT INTO family_members_job (family_member_id, position, organization, salary, start_date) VALUES
+(1, 'Инженер', 'ООО "ТехноСервис"', 85000, '2015-03-01'),
+(2, 'Бухгалтер', 'АО "ФинансГрупп"', 75000, '2012-04-15'),
+(4, 'Репетитор', 'Частная практика', 15000, '2020-01-10'),
+(5, 'Таксист', 'Индивидуальная работа', 30000, '2020-09-01');
+
+INSERT INTO expence_product (date_of_purchase, member_id, product_id, quantity) VALUES
+('2025-02-01', 1, 1, 2),
+('2025-02-01', 1, 2, 3),
+('2025-02-01', 1, 2, 1),
+('2025-02-06', 2, 5, 1),
+('2025-02-09', 5, 3, 30),
+('2025-02-12', 4, 7, 5),
+('2025-02-18', 1, 8, 1),
+('2025-02-22', 2, 9, 1),
+('2025-02-22', 3, 4, 1);
