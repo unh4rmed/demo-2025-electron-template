@@ -1,4 +1,4 @@
-# electron-demo-2025
+# electron-demo2-2025
 
 An Electron application with React
 
